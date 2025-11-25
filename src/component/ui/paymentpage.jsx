@@ -197,7 +197,7 @@ const PaymentPage = () => {
       // 2️⃣ Create session from API
       const create = await CreateOrder({
         orderId,
-        amount: calculateTotal(),
+        amount: 1,
         name: selectedAddress?.Name || "User",
         email: selectedAddress?.Email || "user@gmail.com",
         phone: selectedAddress?.Phone || UserID,
