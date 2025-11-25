@@ -183,10 +183,18 @@ const PaymentPage = () => {
       return;
     }
 
+    // 1️⃣ If session already exists → reuse it
+    const savedSession = localStorage.getItem(`session_${orderId}`);
+    if (savedSession) {
+      console.log("Reusing existing session ID:", savedSession);
+      openCashfree(savedSession);
+      return;
+    }
+
     try {
       setLoading(true);
 
-      // 1. HIT YOUR API TO GET SESSION ID
+      // 2️⃣ Create session from API
       const create = await CreateOrder({
         orderId,
         amount: calculateTotal(),
@@ -202,22 +210,28 @@ const PaymentPage = () => {
 
       const session = create.payment_session_id;
 
-      // 2. Cashfree global SDK from CDN
-      const cf = new window.Cashfree({
-        mode: "production", // or "sandbox"
-      });
+      // SAVE SESSION FOR FUTURE USE
+      localStorage.setItem(`session_${orderId}`, session);
 
-      // 3. Open checkout
-      cf.checkout({
-        paymentSessionId: session,
-        redirectTarget: "_self",
-      });
+      // 3️⃣ Open Cashfree
+      openCashfree(session);
     } catch (err) {
       console.error("Payment Error:", err);
       alert("Something went wrong with payment.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const openCashfree = (session) => {
+    const cf = new window.Cashfree({
+      mode: "production", // or "sandbox"
+    });
+
+    cf.checkout({
+      paymentSessionId: session,
+      redirectTarget: "_self",
+    });
   };
 
   const goBack = () => {
