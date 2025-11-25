@@ -224,17 +224,23 @@ const PaymentPage = () => {
   };
 
   const openCashfree = (session) => {
+    if (!window.Cashfree) {
+      console.error("Cashfree SDK not loaded");
+      alert("Payment system not ready.");
+      return;
+    }
     const cf = new window.Cashfree({
       mode: "production",
     });
 
     cf.checkout({
       paymentSessionId: session,
+      redirectTarget: "sidepane", // 👈 VERY IMPORTANT
 
       onSuccess: async (data) => {
         console.log("Payment Success:", data);
 
-        const res = await UpdateOrder({
+        await UpdateOrder({
           OrderID: orderId,
           Price: calculateTotal(),
           Quantity: getTotalQuantity(),
@@ -245,7 +251,8 @@ const PaymentPage = () => {
         });
 
         localStorage.removeItem(`session_${orderId}`);
-        navigate("/");
+
+        navigate("/"); // 👈 Now it works
       },
 
       onFailure: (err) => {
