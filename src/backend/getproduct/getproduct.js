@@ -1,0 +1,65 @@
+import axios from "axios";
+
+class GetProductModel {
+  constructor(ProID, ProductName, ProductDes, Price) {
+    this.ProID = ProID;
+    this.ProductName = ProductName;
+    this.ProductDes = ProductDes;
+    this.Price = Price;
+  }
+
+  static fromJson(json) {
+    return new GetProductModel(
+      json.ProID || 0,
+      json.ProductName || "",
+      json.ProductDes || "",
+      Number(json.Price) || 0
+    );
+  }
+}
+
+const GetProduct = async (type, id) => {
+  const formData = new URLSearchParams();
+  formData.append("token", "SWNCMPMSREMXAMCKALVAALI");
+  formData.append("Type", type);
+  formData.append("Id", id);
+
+  try {
+    const response = await axios.post(
+      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/ShowProducts",
+      formData,
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+
+    let rawData = response.data;
+
+    if (typeof rawData === "string") {
+      try {
+        rawData = JSON.parse(rawData);
+      } catch (err) {
+        console.error("Invalid JSON format in ShowProducts response", err);
+        return [];
+      }
+    }
+
+    if (!Array.isArray(rawData)) {
+      console.error("Unexpected response format:", rawData);
+      return [];
+    }
+
+    return rawData.map((item) => GetProductModel.fromJson(item));
+  } catch (error) {
+    console.error("Error fetching GetProduct:", {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data,
+    });
+    return [];
+  }
+};
+
+export default GetProduct;
