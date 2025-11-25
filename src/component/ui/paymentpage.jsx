@@ -176,7 +176,6 @@ const PaymentPage = () => {
       setLoading(false);
     }
   };
-
   const handleOnlinePayment = async () => {
     if (!orderId || !selectedAddress) {
       alert("Please select address before payment.");
@@ -224,23 +223,23 @@ const PaymentPage = () => {
   };
 
   const openCashfree = (session) => {
-    if (!window.Cashfree) {
-      console.error("Cashfree SDK not loaded");
-      alert("Payment system not ready.");
-      return;
-    }
     const cf = new window.Cashfree({
       mode: "production",
     });
 
+    // ALWAYS OPEN IN NEW TAB (YOUR REQUIREMENT)
+    const pgUrl = `https://payments.cashfree.com/pg/checkout?session_id=${session}`;
+    window.open(pgUrl, "_blank");
+
+    // ✔ Invisible sidepane call only for callback
     cf.checkout({
       paymentSessionId: session,
-      redirectTarget: "sidepane", // 👈 VERY IMPORTANT
+      redirectTarget: "sidepane",
 
       onSuccess: async (data) => {
         console.log("Payment Success:", data);
 
-        await UpdateOrder({
+        const res = await UpdateOrder({
           OrderID: orderId,
           Price: calculateTotal(),
           Quantity: getTotalQuantity(),
@@ -250,9 +249,12 @@ const PaymentPage = () => {
           PaymentID: data?.transaction?.transaction_id || "",
         });
 
-        localStorage.removeItem(`session_${orderId}`);
-
-        navigate("/"); // 👈 Now it works
+        if (res?.message === "Updated Successfully") {
+          localStorage.removeItem(`session_${orderId}`);
+          navigate("/");
+        } else {
+          alert("Payment success but order update failed.");
+        }
       },
 
       onFailure: (err) => {
