@@ -227,14 +227,9 @@ const PaymentPage = () => {
       mode: "production",
     });
 
-    // ALWAYS OPEN IN NEW TAB (YOUR REQUIREMENT)
-    const pgUrl = `https://payments.cashfree.com/pg/checkout?session_id=${session}`;
-    window.open(pgUrl, "_blank");
-
-    // ✔ Invisible sidepane call only for callback
     cf.checkout({
       paymentSessionId: session,
-      redirectTarget: "sidepane",
+      redirectTarget: "_blank", // 👉 ALWAYS NEW TAB
 
       onSuccess: async (data) => {
         console.log("Payment Success:", data);
