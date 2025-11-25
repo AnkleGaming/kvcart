@@ -176,13 +176,13 @@ const PaymentPage = () => {
       setLoading(false);
     }
   };
+
   const handleOnlinePayment = async () => {
     if (!orderId || !selectedAddress) {
       alert("Please select address before payment.");
       return;
     }
 
-    // 1️⃣ If session already exists → reuse it
     const savedSession = localStorage.getItem(`session_${orderId}`);
     if (savedSession) {
       console.log("Reusing existing session ID:", savedSession);
@@ -193,13 +193,14 @@ const PaymentPage = () => {
     try {
       setLoading(true);
 
-      // 2️⃣ Create session from API
       const create = await CreateOrder({
         orderId,
         amount: calculateTotal(),
         name: selectedAddress?.Name || "User",
         email: selectedAddress?.Email || "user@gmail.com",
         phone: selectedAddress?.Phone || UserID,
+        // Optionally add split parameters if needed for Easy Split
+        // e.g. splits: [{ vendorId: "...", amount: ... }, ... ]
       });
 
       if (!create || !create.payment_session_id) {
@@ -208,11 +209,8 @@ const PaymentPage = () => {
       }
 
       const session = create.payment_session_id;
-
-      // SAVE SESSION FOR FUTURE USE
       localStorage.setItem(`session_${orderId}`, session);
 
-      // 3️⃣ Open Cashfree
       openCashfree(session);
     } catch (err) {
       console.error("Payment Error:", err);
@@ -223,17 +221,16 @@ const PaymentPage = () => {
   };
 
   const openCashfree = (session) => {
-    const cf = new window.Cashfree({
-      mode: "production",
-    });
+    const cf = new window.Cashfree({ mode: "production" });
 
     cf.checkout({
       paymentSessionId: session,
-      redirectTarget: "_blank", // 👉 ALWAYS NEW TAB
+      redirectTarget: "_blank", // open in new tab per your requirement
 
       onSuccess: async (data) => {
-        console.log("Payment Success:", data);
+        console.log("Payment Success response:", data);
 
+        // 1. Update your order status
         const res = await UpdateOrder({
           OrderID: orderId,
           Price: calculateTotal(),
@@ -248,7 +245,7 @@ const PaymentPage = () => {
           localStorage.removeItem(`session_${orderId}`);
           navigate("/");
         } else {
-          alert("Payment success but order update failed.");
+          alert("Payment succeeded but order update failed.");
         }
       },
 
