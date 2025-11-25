@@ -197,7 +197,7 @@ const PaymentPage = () => {
       // 2️⃣ Create session from API
       const create = await CreateOrder({
         orderId,
-        amount: 1,
+        amount: calculateTotal(),
         name: selectedAddress?.Name || "User",
         email: selectedAddress?.Email || "user@gmail.com",
         phone: selectedAddress?.Phone || UserID,
@@ -225,12 +225,33 @@ const PaymentPage = () => {
 
   const openCashfree = (session) => {
     const cf = new window.Cashfree({
-      mode: "production", // or "sandbox"
+      mode: "production",
     });
 
     cf.checkout({
       paymentSessionId: session,
-      redirectTarget: "_self",
+
+      onSuccess: async (data) => {
+        console.log("Payment Success:", data);
+
+        const res = await UpdateOrder({
+          OrderID: orderId,
+          Price: calculateTotal(),
+          Quantity: getTotalQuantity(),
+          Address: selectedAddress.FullAddress,
+          Status: "Paid",
+          PaymentMethod: "Cashfree",
+          PaymentID: data?.transaction?.transaction_id || "",
+        });
+
+        localStorage.removeItem(`session_${orderId}`);
+        navigate("/");
+      },
+
+      onFailure: (err) => {
+        console.error("Payment Failed:", err);
+        alert("Payment Failed. Please try again.");
+      },
     });
   };
 
