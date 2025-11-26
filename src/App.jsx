@@ -27,6 +27,7 @@ import UsedProduct from "./component/ui/usedproduct";
 import RegisterPage from "./component/ui/register";
 import VendorWait from "./component/ui/vendorwait";
 import Product from "./component/ui/products";
+import PaymentSuccess from "./component/ui/paymentsuccess";
 
 const queryClient = new QueryClient();
 
@@ -107,6 +108,7 @@ const App = () => {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/vendorwait" element={<VendorWait />} />
               <Route path="/newproduct" element={<Product />} />
+              <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>

@@ -176,7 +176,6 @@ const PaymentPage = () => {
       setLoading(false);
     }
   };
-
   const handleOnlinePayment = async () => {
     if (!orderId || !selectedAddress) {
       alert("Please select address before payment.");
@@ -185,7 +184,6 @@ const PaymentPage = () => {
 
     const savedSession = localStorage.getItem(`session_${orderId}`);
     if (savedSession) {
-      console.log("Reusing existing session ID:", savedSession);
       openCashfree(savedSession);
       return;
     }
@@ -199,8 +197,6 @@ const PaymentPage = () => {
         name: selectedAddress?.Name || "User",
         email: selectedAddress?.Email || "user@gmail.com",
         phone: selectedAddress?.Phone || UserID,
-        // Optionally add split parameters if needed for Easy Split
-        // e.g. splits: [{ vendorId: "...", amount: ... }, ... ]
       });
 
       if (!create || !create.payment_session_id) {
@@ -209,6 +205,7 @@ const PaymentPage = () => {
       }
 
       const session = create.payment_session_id;
+
       localStorage.setItem(`session_${orderId}`, session);
 
       openCashfree(session);
@@ -221,39 +218,9 @@ const PaymentPage = () => {
   };
 
   const openCashfree = (session) => {
-    const cf = new window.Cashfree({ mode: "production" });
-
-    cf.checkout({
-      paymentSessionId: session,
-      redirectTarget: "_blank", // open in new tab per your requirement
-
-      onSuccess: async (data) => {
-        console.log("Payment Success response:", data);
-
-        // 1. Update your order status
-        const res = await UpdateOrder({
-          OrderID: orderId,
-          Price: calculateTotal(),
-          Quantity: getTotalQuantity(),
-          Address: selectedAddress.FullAddress,
-          Status: "Paid",
-          PaymentMethod: "Cashfree",
-          PaymentID: data?.transaction?.transaction_id || "",
-        });
-
-        if (res?.message === "Updated Successfully") {
-          localStorage.removeItem(`session_${orderId}`);
-          navigate("/");
-        } else {
-          alert("Payment succeeded but order update failed.");
-        }
-      },
-
-      onFailure: (err) => {
-        console.error("Payment Failed:", err);
-        alert("Payment Failed. Please try again.");
-      },
-    });
+    // Only open in new tab
+    const url = `https://payments.cashfree.com/pg/checkout?session_id=${session}`;
+    window.open(url, "_blank");
   };
 
   const goBack = () => {
