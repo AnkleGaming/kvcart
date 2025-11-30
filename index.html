@@ -2,19 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KV Cart</title>
+
+    <!-- ✅ Load Cashfree SDK BEFORE React -->
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
   </head>
 
   <body>
     <div id="root"></div>
 
-    <!-- ✅ Load Cashfree SDK first (Sandbox for testing) -->
-    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
-
-
-    <!-- Then load React app -->
+    <!-- React App -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

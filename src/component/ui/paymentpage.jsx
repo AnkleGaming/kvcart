@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import UpdateOrder from "../../backend/order/updateorder";
 import GetOrder from "../../backend/order/getorderid";
 import Colors from "../../core/constant";
-import CreateOrder from "../../backend/order/createordersession";
+import PaymentGateway from "../../backend/paymentgateway/paymentgateway";
 
 const PaymentPage = () => {
   const location = useLocation();
@@ -176,51 +176,45 @@ const PaymentPage = () => {
       setLoading(false);
     }
   };
-  const handleOnlinePayment = async () => {
-    if (!orderId || !selectedAddress) {
-      alert("Please select address before payment.");
-      return;
-    }
 
-    const savedSession = localStorage.getItem(`session_${orderId}`);
-    if (savedSession) {
-      openCashfree(savedSession);
+  const handleOnlinePayment = async () => {
+    if (!selectedAddress) {
+      alert("Please select an address before payment.");
       return;
     }
 
     try {
       setLoading(true);
 
-      const create = await CreateOrder({
-        orderId,
-        amount: calculateTotal(),
-        name: selectedAddress?.Name || "User",
-        email: selectedAddress?.Email || "user@gmail.com",
-        phone: selectedAddress?.Phone || UserID,
-      });
+      // 1️⃣ Create Order ID
+      const orderId = "ORDER_" + Date.now();
 
-      if (!create || !create.payment_session_id) {
-        alert("Payment session creation failed.");
+      // 2️⃣ Call PaymentGateway API
+      const orderResponse = await PaymentGateway(
+        orderId,
+        calculateTotal(),
+        selectedAddress?.Name || "User",
+        selectedAddress?.Email || "user@gmail.com",
+        selectedAddress?.Phone || UserID,
+        selectedAddress?.Phone || UserID
+      );
+
+      console.log("Cashfree Order Response:", orderResponse);
+
+      // 3️⃣ Validate Response
+      if (!orderResponse || !orderResponse.payment_link) {
+        alert("Payment link missing from server!");
         return;
       }
 
-      const session = create.payment_session_id;
-
-      localStorage.setItem(`session_${orderId}`, session);
-
-      openCashfree(session);
-    } catch (err) {
-      console.error("Payment Error:", err);
-      alert("Something went wrong with payment.");
+      // 4️⃣ Redirect to Cashfree Checkout Page
+      window.location.href = orderResponse.payment_link;
+    } catch (error) {
+      console.error("Payment Error:", error);
+      alert("Something went wrong while starting the payment.");
     } finally {
       setLoading(false);
     }
-  };
-
-  const openCashfree = (session) => {
-    // Only open in new tab
-    const url = `https://payments.cashfree.com/pg/checkout?session_id=${session}`;
-    window.open(url, "_blank");
   };
 
   const goBack = () => {

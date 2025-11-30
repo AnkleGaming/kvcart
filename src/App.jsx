@@ -108,7 +108,7 @@ const App = () => {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/vendorwait" element={<VendorWait />} />
               <Route path="/newproduct" element={<Product />} />
-              <Route path="/payment-success" element={<PaymentSuccess />} />
+              <Route path="/paymentsuccess" element={<PaymentSuccess />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>

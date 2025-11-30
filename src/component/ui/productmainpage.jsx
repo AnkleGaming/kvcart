@@ -142,7 +142,7 @@ const ProductMainPage = () => {
       try {
         const fetchedReviews = await GetProductReviews(product.ProductName);
         setReviews(fetchedReviews);
-      } catch (error) {
+      } catch (error) { 
         console.error("Error fetching reviews:", error);
         setReviews([]);
       }
