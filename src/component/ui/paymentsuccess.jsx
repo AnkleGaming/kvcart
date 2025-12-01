@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { CheckCircle, XCircle } from "lucide-react";
+import VerifyPayment, {
+  PaymentVerifyModel,
+} from "../../backend/paymentgateway/verifypayment"; // Update this path
 import UpdateOrder from "../../backend/order/updateorder";
 
 const PaymentSuccess = () => {
-  const [countdown, setCountdown] = useState(4);
-  const [paymentStatus, setPaymentStatus] = useState("CHECKING");
+  const [countdown, setCountdown] = useState(5);
+  const [paymentStatus, setPaymentStatus] = useState("CHECKING"); // CHECKING | SUCCESS | FAILED
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -12,29 +15,30 @@ const PaymentSuccess = () => {
 
     if (!orderId) {
       console.error("Order ID missing in URL!");
+      setPaymentStatus("FAILED");
+      startRedirectCountdown();
       return;
     }
 
-    async function verifyAndUpdate() {
+    let isMounted = true;
+
+    const verifyAndUpdate = async () => {
       try {
-        // 🔍 1. VERIFY PAYMENT
-        const res = await fetch(
-          `https://ecommerce.anklegaming.live/APIs/APIs.asmx/VerifyPayment?order_id=${orderId}`
-        );
+        // Use your clean VerifyPayment function
+        const result = await VerifyPayment(orderId);
 
-        const text = await res.text();
+        if (!result || !result.success) {
+          throw new Error("Verification failed or invalid response");
+        }
 
-        // Because .asmx returns XML-wrapped JSON sometimes, extract JSON
-        const jsonStr = text.replace(/<\/?string[^>]*>/g, "");
-        const data = JSON.parse(jsonStr);
+        const { status, data } = result;
 
-        console.log("Verify Payment Result:", data);
+        if (!isMounted) return;
 
-        // 🔵 2. CHECK STATUS
-        if (data.status === "PAID") {
+        if (status === "PAID") {
           setPaymentStatus("SUCCESS");
 
-          // 🟢 UPDATE ORDER → Placed
+          // Update order as Placed
           await UpdateOrder({
             OrderID: orderId,
             Price: 0,
@@ -45,7 +49,7 @@ const PaymentSuccess = () => {
         } else {
           setPaymentStatus("FAILED");
 
-          // 🔴 UPDATE ORDER → Cancelled
+          // Update order as Cancelled
           await UpdateOrder({
             OrderID: orderId,
             Price: 0,
@@ -55,19 +59,30 @@ const PaymentSuccess = () => {
           });
         }
       } catch (err) {
-        console.error("Verify API Error:", err);
-        setPaymentStatus("FAILED");
+        console.error("Payment verification or update failed:", err);
+        if (isMounted) {
+          setPaymentStatus("FAILED");
 
-        // If verify itself fails, mark order as failed
-        await UpdateOrder({
-          OrderID: orderId,
-          Status: "Cancelled",
-          PaymentMethod: "Payment Failed",
-        });
+          // Still try to mark as cancelled on error
+          try {
+            await UpdateOrder({
+              OrderID: orderId,
+              Status: "Cancelled",
+              PaymentMethod: "Payment Failed",
+            });
+          } catch (updateErr) {
+            console.error("Failed to cancel order on error:", updateErr);
+          }
+        }
+      } finally {
+        if (isMounted) {
+          startRedirectCountdown();
+        }
       }
+    };
 
-      // 🔄 Start redirect countdown
-      let timer = setInterval(() => {
+    const startRedirectCountdown = () => {
+      const timer = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {
             clearInterval(timer);
@@ -77,19 +92,35 @@ const PaymentSuccess = () => {
           return prev - 1;
         });
       }, 1000);
-    }
+    };
 
     verifyAndUpdate();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full bg-white p-10 rounded-2xl shadow-xl text-center">
+        {paymentStatus === "CHECKING" && (
+          <>
+            <div className="animate-spin rounded-full h-20 w-20 border-b-4 border-blue-600 mx-auto mb-6"></div>
+            <h1 className="text-3xl font-bold text-gray-800">
+              Verifying Payment...
+            </h1>
+            <p className="text-gray-600 mt-2">
+              Please wait while we confirm your payment.
+            </p>
+          </>
+        )}
+
         {paymentStatus === "SUCCESS" && (
           <>
             <CheckCircle className="w-20 h-20 text-green-600 mx-auto mb-6" />
             <h1 className="text-3xl font-bold text-green-700">
-              Payment Successful
+              Payment Successful!
             </h1>
             <p className="text-gray-600 mt-2">
               Your order has been placed successfully.
@@ -102,14 +133,14 @@ const PaymentSuccess = () => {
             <XCircle className="w-20 h-20 text-red-600 mx-auto mb-6" />
             <h1 className="text-3xl font-bold text-red-700">Payment Failed</h1>
             <p className="text-gray-600 mt-2">
-              The payment could not be completed. Order was cancelled.
+              The payment could not be completed. Your order was cancelled.
             </p>
           </>
         )}
 
-        <p className="mt-6 text-gray-500">
-          Redirecting in <span className="font-bold">{countdown}</span>{" "}
-          seconds...
+        <p className="mt-8 text-lg text-gray-500">
+          Redirecting to homepage in{" "}
+          <span className="font-bold text-xl">{countdown}</span> seconds...
         </p>
       </div>
     </div>
