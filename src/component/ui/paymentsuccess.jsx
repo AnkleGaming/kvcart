@@ -1,70 +1,116 @@
 import React, { useEffect, useState } from "react";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, XCircle } from "lucide-react";
+import UpdateOrder from "../../backend/order/updateorder";
 
 const PaymentSuccess = () => {
-  const [countdown, setCountdown] = useState(4); // seconds
+  const [countdown, setCountdown] = useState(4);
+  const [paymentStatus, setPaymentStatus] = useState("CHECKING");
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const orderId = params.get("order_id");
 
-    // Optional: verify payment (you can remove if you trust the gateway)
-    if (orderId) {
-      fetch(`http://localhost:5000/api/verify?order_id=${orderId}`)
-        .then((res) => res.json())
-        .catch(() =>
-          console.log("Skipping verification or failed (still redirecting)")
-        );
+    if (!orderId) {
+      console.error("Order ID missing in URL!");
+      return;
     }
 
-    // Countdown + Auto Redirect
-    const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          // Change this to your actual homepage
-          window.location.href = "/"; // or "https://yourstore.com", "/dashboard", etc.
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 100000);
+    async function verifyAndUpdate() {
+      try {
+        // 🔍 1. VERIFY PAYMENT
+        const res = await fetch(
+          `https://ecommerce.anklegaming.live/APIs/APIs.asmx/VerifyPayment?order_id=${orderId}`
+        );
 
-    return () => clearInterval(timer);
+        const text = await res.text();
+
+        // Because .asmx returns XML-wrapped JSON sometimes, extract JSON
+        const jsonStr = text.replace(/<\/?string[^>]*>/g, "");
+        const data = JSON.parse(jsonStr);
+
+        console.log("Verify Payment Result:", data);
+
+        // 🔵 2. CHECK STATUS
+        if (data.status === "PAID") {
+          setPaymentStatus("SUCCESS");
+
+          // 🟢 UPDATE ORDER → Placed
+          await UpdateOrder({
+            OrderID: orderId,
+            Price: 0,
+            Quantity: 1,
+            Status: "Placed",
+            PaymentMethod: "Online Payment",
+          });
+        } else {
+          setPaymentStatus("FAILED");
+
+          // 🔴 UPDATE ORDER → Cancelled
+          await UpdateOrder({
+            OrderID: orderId,
+            Price: 0,
+            Quantity: 1,
+            Status: "Cancelled",
+            PaymentMethod: "Payment Failed",
+          });
+        }
+      } catch (err) {
+        console.error("Verify API Error:", err);
+        setPaymentStatus("FAILED");
+
+        // If verify itself fails, mark order as failed
+        await UpdateOrder({
+          OrderID: orderId,
+          Status: "Cancelled",
+          PaymentMethod: "Payment Failed",
+        });
+      }
+
+      // 🔄 Start redirect countdown
+      let timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            window.location.href = "/";
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    verifyAndUpdate();
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-12 text-center">
-        {/* Success Icon with subtle animation */}
-        <div className="flex justify-center mb-8">
-          <div className="relative">
-            <CheckCircle className="w-24 h-24 text-green-500 animate-ping absolute" />
-            <CheckCircle className="w-24 h-24 text-green-600 relative" />
-          </div>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="max-w-md w-full bg-white p-10 rounded-2xl shadow-xl text-center">
+        {paymentStatus === "SUCCESS" && (
+          <>
+            <CheckCircle className="w-20 h-20 text-green-600 mx-auto mb-6" />
+            <h1 className="text-3xl font-bold text-green-700">
+              Payment Successful
+            </h1>
+            <p className="text-gray-600 mt-2">
+              Your order has been placed successfully.
+            </p>
+          </>
+        )}
 
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">
-          Payment Successful!
-        </h1>
+        {paymentStatus === "FAILED" && (
+          <>
+            <XCircle className="w-20 h-20 text-red-600 mx-auto mb-6" />
+            <h1 className="text-3xl font-bold text-red-700">Payment Failed</h1>
+            <p className="text-gray-600 mt-2">
+              The payment could not be completed. Order was cancelled.
+            </p>
+          </>
+        )}
 
-        <p className="text-xl text-gray-600 mb-8">
-          Thank you for your purchase. Your order is confirmed.
-        </p>
-
-        {/* Countdown */}
-        <div className="text-lg text-gray-500">
-          Redirecting you home in{" "}
-          <span className="font-bold text-green-600 text-2xl">{countdown}</span>{" "}
+        <p className="mt-6 text-gray-500">
+          Redirecting in <span className="font-bold">{countdown}</span>{" "}
           seconds...
-        </div>
-
-        {/* Optional manual redirect */}
-        <div className="mt-10">
-          <a href="/" className="text-green-600 font-semibold hover:underline">
-            ← Back to Home Now
-          </a>
-        </div>
+        </p>
       </div>
     </div>
   );
