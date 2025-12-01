@@ -177,21 +177,28 @@ const PaymentPage = () => {
     }
   };
 
+  console.log("Rendering PaymentPage with OrderID:", orderId);
+
   const handleOnlinePayment = async () => {
     if (!selectedAddress) {
       alert("Please select an address before payment.");
       return;
     }
 
+    if (!orderId) {
+      alert("Order ID is missing! Cannot continue payment.");
+      return;
+    }
+
     try {
       setLoading(true);
 
-      // 1️⃣ Create Order ID
-      const orderId = "ORDER_" + Date.now();
+      // ✅ Use real backend Order ID
+      const orderIdToPay = orderId;
 
       // 2️⃣ Call PaymentGateway API
       const orderResponse = await PaymentGateway(
-        orderId,
+        orderIdToPay,
         calculateTotal(),
         selectedAddress?.Name || "User",
         selectedAddress?.Email || "user@gmail.com",
@@ -207,7 +214,7 @@ const PaymentPage = () => {
         return;
       }
 
-      // 4️⃣ Redirect to Cashfree Checkout Page
+      // 4️⃣ Redirect to Cashfree checkout
       window.location.href = orderResponse.payment_link;
     } catch (error) {
       console.error("Payment Error:", error);
