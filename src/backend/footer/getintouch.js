@@ -30,7 +30,7 @@ const GetInTouch = async () => {
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/ShowGetinTouch",
+      "https://api.kvcart.com/APIs/APIs.asmx/ShowGetinTouch",
       formData,
       {
         headers: {

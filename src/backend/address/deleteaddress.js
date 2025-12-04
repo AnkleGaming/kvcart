@@ -7,7 +7,7 @@ const DeleteAddress = async (ID) => {
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/DeleteAddress",
+      "https://api.kvcart.com/APIs/APIs.asmx/DeleteAddress",
       formData,
       {
         headers: {

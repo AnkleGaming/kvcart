@@ -41,7 +41,7 @@ const GetProductReviews = async (productId) => {
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/ShowProductReviews",
+      "https://api.kvcart.com/APIs/APIs.asmx/ShowProductReviews",
       formData,
       {
         headers: {

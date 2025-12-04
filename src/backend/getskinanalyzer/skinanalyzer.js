@@ -29,7 +29,7 @@ const GetSkinAnalyzer = async () => {
   formData.append("token", "SWNCMPMSREMXAMCKALVAALI");
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/ShowSkinlyzer",
+      "https://api.kvcart.com/APIs/APIs.asmx/ShowSkinlyzer",
       formData,
       {
         headers: {

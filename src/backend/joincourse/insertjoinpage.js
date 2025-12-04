@@ -23,7 +23,7 @@ const InsertJoinCourse = async (
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/Insertjoinpage",
+      "https://api.kvcart.com/APIs/APIs.asmx/Insertjoinpage",
       formData,
       {
         headers: {

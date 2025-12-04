@@ -31,7 +31,7 @@ const VerifyPayment = async (orderId) => {
   try {
     // 🟧 Call .asmx API using POST (as required)
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/VerifyPayment",
+      "https://api.kvcart.com/APIs/APIs.asmx/VerifyPayment",
       formData,
       {
         headers: {

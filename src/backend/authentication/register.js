@@ -22,7 +22,7 @@ const RegisterUser = async (
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/Register",
+      "https://api.kvcart.com/APIs/APIs.asmx/Register",
       formData,
       {
         headers: {

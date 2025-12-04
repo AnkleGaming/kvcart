@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import spaImage from "../../assets/facialimg.png";
+import spaImage from "../../assets/imgbroke.png";
 import GetProductImage from "../../backend/getproduct/getproductimage";
 import SuggestProductScreen from "./suggestedproduct";
 import RatingScreen from "./ratingscreen";
@@ -62,7 +62,7 @@ const ProductMainPage = () => {
         console.log("product id is like", product.ProID);
         console.log("Fetched Images", fetchedImages);
 
-        const baseUrl = "https://ecommerce.anklegaming.live/";
+        const baseUrl = "https://api.kvcart.com/";
 
         if (Array.isArray(fetchedImages) && fetchedImages.length > 0) {
           const mapped = fetchedImages.map((img) =>
@@ -142,7 +142,7 @@ const ProductMainPage = () => {
       try {
         const fetchedReviews = await GetProductReviews(product.ProductName);
         setReviews(fetchedReviews);
-      } catch (error) { 
+      } catch (error) {
         console.error("Error fetching reviews:", error);
         setReviews([]);
       }
@@ -592,14 +592,18 @@ const ProductMainPage = () => {
                   )}
                 </>
               ) : (
-                <img
-                  src={images[0] || spaImage}
-                  alt={product.ProductName}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = spaImage;
-                  }}
-                />
+                <>
+                  <div className="relative w-full h-full">
+                    <img
+                      src={images[0] || spaImage}
+                      alt={product.ProductName}
+                      className="w-full h-full object-contain"
+                      onError={(e) => {
+                        e.currentTarget.src = spaImage;
+                      }}
+                    />
+                  </div>
+                </>
               )}
             </div>
 

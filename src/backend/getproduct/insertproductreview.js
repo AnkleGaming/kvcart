@@ -21,7 +21,7 @@ const InsertProductReview = async (
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/insertProductReview",
+      "https://api.kvcart.com/APIs/APIs.asmx/insertProductReview",
       formData,
       {
         headers: {

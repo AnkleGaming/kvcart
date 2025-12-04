@@ -39,7 +39,7 @@ const PaymentGateway = async (
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/CreateOrder", // API URL
+      "https://api.kvcart.com/APIs/APIs.asmx/CreateOrder", // API URL
       formData,
       {
         headers: {

@@ -29,7 +29,7 @@ const GetPopularServices = async () => {
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/GetPopularServices",
+      "https://api.kvcart.com/APIs/APIs.asmx/GetPopularServices",
       formData,
       {
         headers: {

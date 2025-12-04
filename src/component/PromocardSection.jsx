@@ -121,7 +121,7 @@ const PromocardSection = () => {
                     service.ProductImages
                       ? service.ProductImages.startsWith("http")
                         ? service.ProductImages
-                        : `https://ecommerce.anklegaming.live/${service.ProductImages}`
+                        : `https://api.kvcart.com/${service.ProductImages}`
                       : spaImage
                   }
                   onClickCard={() => handleServiceClick(service)} // FIXED

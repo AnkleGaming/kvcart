@@ -2,7 +2,7 @@ import axios from "axios";
 
 const DeleteOrder = async (ID) => {
   try {
-    const url = "https://ecommerce.anklegaming.live/APIs/APIs.asmx/Deleteorder";
+    const url = "https://api.kvcart.com/APIs/APIs.asmx/Deleteorder";
 
     const formData = new URLSearchParams();
     formData.append("token", "SWNCMPMSREMXAMCKALVAALI");

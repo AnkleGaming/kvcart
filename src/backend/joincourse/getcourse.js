@@ -33,7 +33,7 @@ const GetCourse = async () => {
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/ShowCourse",
+      "https://api.kvcart.com/APIs/APIs.asmx/ShowCourse",
       formData
     );
 

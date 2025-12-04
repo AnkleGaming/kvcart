@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "./card";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import spaImage from "../../assets/imageforback.jpg";
+import spaImage from "../../assets/imgbroke.png";
 import GetProduct from "../../backend/getproduct/getproduct";
 import GetProductImage from "../../backend/getproduct/getproductimage";
 import { AlertCircle, ShoppingCart } from "lucide-react";

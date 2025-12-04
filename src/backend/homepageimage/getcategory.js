@@ -3,7 +3,7 @@ import axios from "axios";
 const GetSubCategory = async () => {
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/ServiceCategory",
+      "https://api.kvcart.com/APIs/APIs.asmx/ServiceCategory",
       new URLSearchParams({
         token: "SWNCMPMSREMXAMCKALVAALI",
       }),

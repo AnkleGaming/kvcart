@@ -18,7 +18,7 @@ const CreateOrder = async ({
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/CreateOrder", // <-- replace with your real URL
+      "https://api.kvcart.com/APIs/APIs.asmx/CreateOrder", // <-- replace with your real URL
       formData.toString(),
       {
         headers: {

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Card, CardContent } from "./card";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import spaImage from "../../assets/imageforback.jpg";
+import spaImage from "../../assets/imgbroke.png";
 import GetProduct from "../../backend/getproduct/getproduct";
 import GetProductImage from "../../backend/getproduct/getproductimage";
 import { AlertCircle, ShoppingCart } from "lucide-react";
@@ -70,7 +70,7 @@ const UsedProduct = () => {
                 ...product,
                 imageUrl:
                   images.length > 0
-                    ? `https://ecommerce.anklegaming.live/${images[0].productImage}`
+                    ? `https://api.kvcart.com/${images[0].productImage}`
                     : spaImage,
               };
             } catch (err) {
@@ -328,7 +328,7 @@ const UsedProduct = () => {
                   onClick={() => handleServiceClick(service)}
                 >
                   <CardContent className="p-0 h-full flex flex-col">
-                    <div className="h-[380px] overflow-hidden">
+                    <div className="h-48 overflow-hidden">
                       <img
                         src={service.imageUrl || spaImage}
                         alt={service.ProductName}

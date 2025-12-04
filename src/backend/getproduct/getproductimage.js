@@ -23,7 +23,7 @@ const GetProductImage = async (productId) => {
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/ShowProductImages",
+      "https://api.kvcart.com/APIs/APIs.asmx/ShowProductImages",
       formData,
       {
         headers: {

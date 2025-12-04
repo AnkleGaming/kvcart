@@ -45,7 +45,7 @@ const InsertOrder = async ({
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/InsertOrders",
+      "https://api.kvcart.com/APIs/APIs.asmx/InsertOrders",
       formData.toString(),
       {
         headers: {

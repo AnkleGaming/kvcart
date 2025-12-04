@@ -10,7 +10,7 @@ const UpdateOrderQuantity = async ({ Id, OrderID, Price, Quantity }) => {
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/UpdateQtyPrice",
+      "https://api.kvcart.com/APIs/APIs.asmx/UpdateQtyPrice",
       formData.toString(),
       {
         headers: {

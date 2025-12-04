@@ -23,7 +23,7 @@ const GetWallet = async (phone) => {
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/GetWallet",
+      "https://api.kvcart.com/APIs/APIs.asmx/GetWallet",
       formData,
       { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     );

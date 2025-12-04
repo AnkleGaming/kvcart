@@ -207,7 +207,7 @@ const Navigation = () => {
                     <img
                       src={
                         user[0]?.Image
-                          ? `https://ecommerce.anklegaming.live//Images/${user[0].Image}`
+                          ? `https://api.kvcart.com//Images/${user[0].Image}`
                           : "https://via.placeholder.com/150?text=Avatar"
                       }
                       alt={user[0]?.Fullname || "Profile"}

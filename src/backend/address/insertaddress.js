@@ -12,7 +12,7 @@ const InsertAddress = async (Name, Phone, Address, City, Pincode) => {
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/InsertAddresss",
+      "https://api.kvcart.com/APIs/APIs.asmx/InsertAddresss",
       formData,
       {
         headers: {

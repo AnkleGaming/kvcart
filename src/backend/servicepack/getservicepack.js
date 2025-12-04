@@ -32,7 +32,7 @@ const GetServicePack = async (id, type) => {
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/GetServicePack",
+      "https://api.kvcart.com/APIs/APIs.asmx/GetServicePack",
       formData,
       {
         headers: {

@@ -31,7 +31,7 @@ const GetAddress = async (Phone) => {
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/ShowAddresss",
+      "https://api.kvcart.com/APIs/APIs.asmx/ShowAddresss",
       formData,
       { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     );

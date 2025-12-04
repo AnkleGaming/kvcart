@@ -28,7 +28,7 @@ const GetWomenServices = async () => {
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/GetWomenServices",
+      "https://api.kvcart.com/APIs/APIs.asmx/GetWomenServices",
       formData,
       {
         headers: {

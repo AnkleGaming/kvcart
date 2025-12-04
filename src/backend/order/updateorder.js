@@ -29,7 +29,7 @@ const UpdateOrder = async ({
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/UpdateOrders",
+      "https://api.kvcart.com/APIs/APIs.asmx/UpdateOrders",
       formData.toString(),
       {
         headers: {

@@ -10,7 +10,7 @@ const WePretiffyVendor = async (Name, Mobile, Message, Type) => {
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/Want",
+      "https://api.kvcart.com/APIs/APIs.asmx/Want",
       formData,
       {
         headers: {

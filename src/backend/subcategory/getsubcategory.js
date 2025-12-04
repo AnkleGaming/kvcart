@@ -30,7 +30,7 @@ const GetSubCategory = async (Id, Type) => {
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/OffersService",
+      "https://api.kvcart.com/APIs/APIs.asmx/OffersService",
       formData,
       {
         headers: {

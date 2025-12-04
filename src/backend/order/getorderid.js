@@ -60,7 +60,7 @@ const GetOrder = async (UserID, Status) => {
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/GetOrder",
+      "https://api.kvcart.com/APIs/APIs.asmx/GetOrder",
       formData,
       {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },

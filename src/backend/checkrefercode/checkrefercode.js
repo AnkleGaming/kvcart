@@ -8,7 +8,7 @@ const CheckReferCode = async (refer, phone) => {
 
   try {
     const response = await axios.post(
-      "https://ecommerce.anklegaming.live/APIs/APIs.asmx/UpdateReferCode",
+      "https://api.kvcart.com/APIs/APIs.asmx/UpdateReferCode",
       formData,
       {
         headers: {
